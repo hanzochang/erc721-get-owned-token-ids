@@ -42,23 +42,20 @@ const getCollection = async (holderAddress: string): Promise<number[]> => {
   )
 
   // ② 　Contract インスタンスを作成する。
-  const token = new ethers.Contract(
+  const contract = new ethers.Contract(
     process.env.NFT_CONTRACT_ADDRESS as string,
     sampleAbi,
     provider
   )
 
-  console.log('transfer', token.filters.Transfer(holderAddress, null))
-  console.log('transfer', token.filters.Transfer(null, holderAddress))
-
   // ③ 調べたいホルダーのウォレットの過去のtokenIdの送信イベントログすべて取得する。
-  const sentLogs = await token.queryFilter(
-    token.filters.Transfer(holderAddress, null)
+  const sentLogs = await contract.queryFilter(
+    contract.filters.Transfer(holderAddress, null)
   )
 
   // ④ 調べたいホルダーのウォレットの過去のtokenIdの受信イベントログすべて取得する。
-  const receivedLogs = await token.queryFilter(
-    token.filters.Transfer(null, holderAddress)
+  const receivedLogs = await contract.queryFilter(
+    contract.filters.Transfer(null, holderAddress)
   )
 
   // ⑤ ③と④のログを結合し、EventLogを時間が古いものから順に時系列で並べる。
